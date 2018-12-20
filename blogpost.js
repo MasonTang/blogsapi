@@ -32,9 +32,13 @@ router.post('/', jsonParser, (req, res) => {
            return res.status(400).send(message); 
         }
     }
-    const item = BlogPosts.create(req.body.title, req.body.content, req.body.author);
+    const item = BlogPosts.create(
+        req.body.title, 
+        req.body.content, 
+        req.body.author
+    );
     res.status(201).json(item);
-})
+    })
 
 //delete request that has the proper id in the BlogPosts List
 router.delete('/:id', (req,res) => {
@@ -50,12 +54,11 @@ router.delete('/:id', (req,res) => {
 //otherwise call `BlogPosts.update` with updated item
 
 router.put('/:id', jsonParser, (req, res) => {
-    console.log(req.body)
-    const requiredFields = ['id', 'title', 'content', 'author'];
+    const requiredFields = ['id', 'title', 'content', 'author', 'publishDate'];
     for(let i = 0; i < requiredFields.length; i++) {
         const field = requiredFields[i];
         if(!(field in req.body)){
-            const message = `Missing ${req.body} in body`
+            const message = `Missing ${field} in body`
             console.error(message);
             return res.status(400).send(message);
         }
@@ -66,12 +69,13 @@ router.put('/:id', jsonParser, (req, res) => {
         return res.status(400).send(message);
     }
     console.log(`Updating Blog Post items ${req.params.id}`)
-    const updatedItem = BlogPosts.update({
+    BlogPosts.update({
         id: req.params.id,
-        title: req.body.author,
+        title: req.body.title,
         content: req.body.content,
-        author: req.body.author
-    })
+        author: req.body.author,
+        publishDate: req.body.publishDate
+    });
     res.status(204).end();
 })
 
